@@ -9,18 +9,18 @@ import org.springframework.stereotype.Controller;
 public class ClickerController {
 
 	@Autowired
-	private ClickerService clickerService;
+	private CounterService counterService;
 
 	@MessageMapping("/count")
 	@SendTo("/topic/click")
 	public int incrementCounter() throws Exception {
-		return clickerService.incrementCounterAndGet();
+		return counterService.incrementCounterAndGet();
 	}
 
 	@MessageMapping("/current")
 	@SendTo("/topic/click")
 	public int getCurrentClickCount() {
-		return clickerService.getCurrentClickCount();
+		return counterService.getCurrentClickCount();
 	}
 
 }

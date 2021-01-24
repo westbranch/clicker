@@ -18,55 +18,55 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = ClickerService.class)
-public class ClickerServiceTest {
+@ContextConfiguration(classes = CounterService.class)
+public class CounterServiceTest {
 
     @Autowired
-    private ClickerService clickerService;
+    private CounterService counterService;
 
     @MockBean
-    private ClickerRepository clickerRepository;
+    private CounterRepository counterRepository;
 
     @Mock
     CounterEntity entityMock;
 
     @Before
     public void setUp() throws Exception {
-        when(clickerRepository.findDistinctByValueType(anyString())).thenReturn(Optional.of(entityMock));
-        when(clickerRepository.save(any(CounterEntity.class))).thenReturn(entityMock);
+        when(counterRepository.findDistinctByValueType(anyString())).thenReturn(Optional.of(entityMock));
+        when(counterRepository.save(any(CounterEntity.class))).thenReturn(entityMock);
         when(entityMock.getCounter()).thenReturn(0);
     }
 
     @Test
     public void shouldReturn5After5Increments() {
         int expectedClickCount = 5;
-        int valueBeforeExecution = clickerService.getCurrentClickCount();
+        int valueBeforeExecution = counterService.getCurrentClickCount();
         Assert.assertEquals(0, valueBeforeExecution);
 
         for (int i = 0; i < expectedClickCount; i++) {
-            clickerService.incrementCounterAndGet();
+            counterService.incrementCounterAndGet();
         }
-        int valueAfterExecution = clickerService.getCurrentClickCount();
+        int valueAfterExecution = counterService.getCurrentClickCount();
         Assert.assertEquals(expectedClickCount, valueAfterExecution);
     }
 
     @Test
     public void shouldCallRepositorySaveAndFindWhenIncremented() {
-        clickerService.incrementCounterAndGet();
-        verify(clickerRepository).save(any(CounterEntity.class));
-        verify(clickerRepository).findDistinctByValueType(anyString());
+        counterService.incrementCounterAndGet();
+        verify(counterRepository).save(any(CounterEntity.class));
+        verify(counterRepository).findDistinctByValueType(anyString());
     }
 
     @Test
     public void shouldReturnCurrentCounterValue() {
         int expectedClickCount = 5;
         when(entityMock.getCounter()).thenReturn(expectedClickCount);
-        clickerService.setCurrentCounterValue();
+        counterService.setCurrentCounterValue();
 
-        int actualClickCount = clickerService.getCurrentClickCount();
+        int actualClickCount = counterService.getCurrentClickCount();
         Assert.assertEquals(expectedClickCount, actualClickCount);
 
-        int actualClickCountAfterIncrement = clickerService.incrementCounterAndGet();
+        int actualClickCountAfterIncrement = counterService.incrementCounterAndGet();
         Assert.assertEquals(6, actualClickCountAfterIncrement);
     }
 
