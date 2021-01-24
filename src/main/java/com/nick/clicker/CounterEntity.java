@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "clicker")
@@ -21,22 +23,17 @@ public class CounterEntity {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "counter")
     private Integer value;
 
-    //TODO add value type
-    //TODO add update time
+    @Column(name = "value_type")
+    private String valueType = "counter";
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "last_updated")
+    private OffsetDateTime lastUpdated;
 
     public Integer getValue() {
         return value;
@@ -44,5 +41,9 @@ public class CounterEntity {
 
     public void setValue(Integer value) {
         this.value = value;
+    }
+
+    public void setLastUpdated(OffsetDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }
