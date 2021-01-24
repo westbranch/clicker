@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS clicker
+(
+    id BIGSERIAL PRIMARY KEY,
+    counter BIGINT
+);
