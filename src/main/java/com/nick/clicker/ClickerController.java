@@ -13,14 +13,14 @@ public class ClickerController {
 
 	@MessageMapping("/count")
 	@SendTo("/topic/click")
-	public int increment() throws Exception {
-		return clickerService.incrementAndGet();
+	public int incrementCounter() throws Exception {
+		return clickerService.incrementCounterAndGet();
 	}
 
-	@MessageMapping("/init")
+	@MessageMapping("/current")
 	@SendTo("/topic/click")
-	public int getInitialValue() {
-		return clickerService.getClickCount();
+	public int getCurrentClickCount() {
+		return clickerService.getCurrentClickCount();
 	}
 
 }

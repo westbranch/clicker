@@ -4,50 +4,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.swing.*;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ClickerService {
 
     private static final String COUNTER_VALUE_TYPE = "counter";
-    private final CounterEntity entity = new CounterEntity(1L, 0);
+    private static final long SINGLE_ENTITY_ID = 1L;
     private AtomicInteger clickCount = new AtomicInteger();
 
     @Autowired
     private ClickerRepository repository;
 
-    @PostConstruct
-    private void setInitialValue() {
-        clickCount.set(getLatestValue());
-    }
-
-    public int incrementAndGet() {
+    public int incrementCounterAndGet() {
         int result = clickCount.incrementAndGet();
         saveToDB(result);
         return result;
     }
 
-    public int getClickCount() {
+    public int getCurrentClickCount() {
         return clickCount.get();
     }
 
-    private void saveToDB(int result) {
-        entity.setValue(result);
-        entity.setLastUpdated(getCurrentTime());
-        repository.save(entity);
+    @PostConstruct
+    public void setCurrentCounterValue() {
+        clickCount.set(getCurrentCounterValueFromDB());
     }
 
-    private OffsetDateTime getCurrentTime() {
-        return OffsetDateTime.now();
+    private void saveToDB(int counterValue) {
+        repository.save(new CounterEntity(SINGLE_ENTITY_ID, counterValue, COUNTER_VALUE_TYPE, OffsetDateTime.now()));
     }
 
-    private int getLatestValue() {
-        Optional<CounterEntity> counterValue = repository.findDistinctByValueType(COUNTER_VALUE_TYPE);
-        return counterValue.map(CounterEntity::getValue).orElse(0);
+    private int getCurrentCounterValueFromDB() {
+        var counterValue = repository.findDistinctByValueType(COUNTER_VALUE_TYPE);
+        return counterValue.map(CounterEntity::getCounter).orElse(0);
     }
 }

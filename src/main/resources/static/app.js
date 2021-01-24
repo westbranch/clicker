@@ -8,7 +8,7 @@ function connect() {
         stompClient.subscribe('/topic/click', function (response) {
             document.querySelector("#counter").textContent = JSON.parse(response.body);
         });
-        stompClient.send("/app/init", {}, {});
+        stompClient.send("/app/current", {}, {});
     });
 }
 
