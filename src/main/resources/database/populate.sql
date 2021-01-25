@@ -1,2 +1,2 @@
-INSERT INTO clicker (id, counter, value_type) VALUES (1, 0, 'counter')
+INSERT INTO clicker (id, counter) VALUES (1, 0)
 ON CONFLICT DO NOTHING;

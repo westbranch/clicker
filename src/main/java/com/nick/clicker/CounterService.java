@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class CounterService {
 
-    private static final String COUNTER_VALUE_TYPE = "counter";
     private static final long SINGLE_ENTITY_ID = 1L;
     private AtomicInteger clickCount = new AtomicInteger();
 
@@ -24,7 +23,7 @@ public class CounterService {
      * Increments counter and returns post-increment value.
      * @return post-increment counter value.
      */
-    public int incrementCounterAndGet() {
+    public synchronized int incrementCounterAndGet() {
         int result = clickCount.incrementAndGet();
         saveToDB(result);
         return result;
@@ -48,11 +47,17 @@ public class CounterService {
     }
 
     private void saveToDB(int counterValue) {
-        repository.save(new CounterEntity(SINGLE_ENTITY_ID, counterValue, COUNTER_VALUE_TYPE, OffsetDateTime.now()));
+        var entityOpt = repository.findById(SINGLE_ENTITY_ID);
+        if (entityOpt.isPresent()) {
+            CounterEntity counterEntity = entityOpt.get();
+            counterEntity.setCounter(counterValue);
+            counterEntity.setLastUpdated(LocalDateTime.now());
+            repository.save(counterEntity);
+        }
     }
 
     private int getCurrentCounterValueFromDB() {
-        var counterValue = repository.findDistinctByValueType(COUNTER_VALUE_TYPE);
+        var counterValue = repository.findById(SINGLE_ENTITY_ID);
         return counterValue.map(CounterEntity::getCounter).orElse(0);
     }
 }

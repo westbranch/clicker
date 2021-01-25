@@ -13,7 +13,7 @@ public class ClickerController {
 
 	@MessageMapping("/count")
 	@SendTo("/topic/click")
-	public int incrementCounter() throws Exception {
+	public int incrementCounter() {
 		return counterService.incrementCounterAndGet();
 	}
 

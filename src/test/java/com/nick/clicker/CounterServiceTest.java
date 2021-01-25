@@ -32,7 +32,7 @@ public class CounterServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        when(counterRepository.findDistinctByValueType(anyString())).thenReturn(Optional.of(entityMock));
+        when(counterRepository.findById(anyLong())).thenReturn(Optional.of(entityMock));
         when(counterRepository.save(any(CounterEntity.class))).thenReturn(entityMock);
         when(entityMock.getCounter()).thenReturn(0);
     }
@@ -54,7 +54,7 @@ public class CounterServiceTest {
     public void shouldCallRepositorySaveAndFindWhenIncremented() {
         counterService.incrementCounterAndGet();
         verify(counterRepository).save(any(CounterEntity.class));
-        verify(counterRepository).findDistinctByValueType(anyString());
+        verify(counterRepository, atLeast(1)).findById(anyLong());
     }
 
     @Test
